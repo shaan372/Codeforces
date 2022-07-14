@@ -56,38 +56,29 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
+ll solve(ll i, ll j, vector<ll> &v, ll n, ll h, ll l, ll r, vector<vector<ll>> &dp)
+{
+    if (i >= n)
+        return 0;
+    if (dp[i][j] != -1)
+        return dp[i][j];
+    ll op1 = (j + v[i] - 1) % h >= l && (j + v[i] - 1) % h <= r;
+    op1 += solve(i + 1, (j + v[i] - 1) % h, v, n, h, l, r, dp);
+    ll op2 = (j + v[i]) % h >= l && (j + v[i]) % h <= r;
+    op2 += solve(i + 1, (j + v[i]) % h, v, n, h, l, r, dp);
+    return dp[i][j] = max(op1, op2);
+}
+
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
-    cin >> t;
-    while (t--)
-    {
-        int n;
-        cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
-        {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
-        }
-
-        cout << ans << '\n';
-    }
+    ll n, h, l, r;
+    cin >> n >> h >> l >> r;
+    vector<ll> v(n);
+    for (auto &i : v)
+        cin >> i;
+    vector<vector<ll>> dp(n + 1, vector<ll>(h, -1));
+    cout << solve(0, 0, v, n, h, l, r, dp);
     return 0;
 }

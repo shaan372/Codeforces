@@ -64,30 +64,42 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
+        int n, i, j, k, l;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        vector<int> a(n), b(n);
+        vector<pair<int, int>> ans;
+        for (int &x : a)
+            cin >> x;
+        for (int &x : b)
+            cin >> x;
+        for (i = 0; i < n; i++)
+            for (j = i + 1; j < n; j++)
+                if (a[i] > a[j])
+                {
+                    swap(a[i], a[j]);
+                    swap(b[i], b[j]);
+                    ans.push_back({i, j});
+                }
+        for (i = j = 0; i < n; i = j)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            while (j < n && a[i] == a[j])
+                ++j;
+            for (k = i; k < j; k++)
+                for (l = k + 1; l < j; l++)
+                    if (b[k] > b[l])
+                    {
+                        swap(b[k], b[l]);
+                        ans.push_back({k, l});
+                    }
         }
-
-        cout << ans << '\n';
+        if (!is_sorted(all(b)))
+        {
+            cout << "-1\n";
+            continue;
+        }
+        cout << ans.size() << '\n';
+        for (auto i : ans)
+            cout << i.ff + 1 << ' ' << i.ss + 1 << '\n';
     }
     return 0;
 }

@@ -56,38 +56,42 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
+const ll max_n = 4e4 + 22;
+ll dp[max_n];
+void solve()
+{
+    vector<ll> v;
+    for (ll i = 1; i < max_n; i++)
+    {
+        string s = to_string(i);
+        string t = s;
+        reverse(all(s));
+        if (t == s)
+            v.pb(i);
+    }
+    dp[0] = 1;
+    for (auto j : v)
+    {
+        for (ll i = 1; i < max_n; i++)
+        {
+            if (i - j >= 0)
+                dp[i] = (dp[i] % M + dp[i - j] % M) % M;
+        }
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
     ll t;
     cin >> t;
+    solve();
     while (t--)
     {
-        int n;
+        ll n;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
-        {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
-        }
-
-        cout << ans << '\n';
+        cout << dp[n] << nl;
     }
     return 0;
 }

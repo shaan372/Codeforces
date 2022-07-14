@@ -56,6 +56,20 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
+bool verify(vector<ll> &v, ll n)
+{
+    for (ll i = 0; i < n; i++)
+    {
+        ll ind1 = (i - 1 + n) % n;
+        ll ind2 = (i + 1 + n) % n;
+        if (v[ind1] > v[i] && v[ind2] > v[i])
+            continue;
+        if (v[ind1] < v[i] && v[ind2] < v[i])
+            continue;
+        return false;
+    }
+    return true;
+}
 int main(int argc, char const *argv[])
 {
     fast_io;
@@ -64,30 +78,45 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
+        ll n;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        vector<ll> v(n);
+        for (auto &i : v)
+            cin >> i;
+        sort(all(v));
+        vector<ll> v1(n), v2(n);
+        ll j = 0;
+        for (ll i = 0; i < n; i += 2)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            v1[i] = v[j];
+            v2[i] = v[j];
+            j++;
         }
-
-        cout << ans << '\n';
+        ll k = n - 1;
+        for (ll i = 1; i < n; i += 2)
+        {
+            v1[i] = v[j];
+            v2[i] = v[k];
+            k--;
+            j++;
+        }
+        if (verify(v1, n) == true)
+        {
+            cout << "YES" << nl;
+            for (auto i : v1)
+                cout << i << " ";
+            cout << nl;
+            continue;
+        }
+        if (verify(v2, n) == true)
+        {
+            cout << "YES" << nl;
+            for (auto i : v2)
+                cout << i << " ";
+            cout << nl;
+            continue;
+        }
+        cout << "NO" << nl;
     }
     return 0;
 }

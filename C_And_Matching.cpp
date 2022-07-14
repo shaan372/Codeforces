@@ -55,6 +55,79 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
+void resolve(ll n, ll k)
+{
+    vector<bool> v(n, false);
+    cout << n - 2 << " " << n - 1 << nl;
+    cout << n - 3 << " " << 1 << nl;
+    cout << "0"
+         << " "
+         << "2" << nl;
+    v[n - 2] = true;
+    v[n - 1] = true;
+    v[n - 3] = true;
+    v[1] = true;
+    v[0] = true;
+    v[2] = true;
+    for (ll i = n - 4; i >= 0; i--)
+    {
+        if (v[i] == true)
+            continue;
+        ll x = n - 1 - i;
+        if (v[x] == false)
+        {
+            cout << x << " " << i << nl;
+            v[i] = true;
+            v[x] = true;
+        }
+        else if (v[0] == false)
+        {
+            cout << "0"
+                 << " " << i << nl;
+            v[0] = true;
+            v[i] = true;
+        }
+    }
+}
+void solve()
+{
+    ll n, k;
+    cin >> n >> k;
+    if (k >= n - 1)
+    {
+        if (k == n - 1)
+        {
+            if (n == 4)
+                cout << "-1" << nl;
+            else
+                resolve(n, k);
+        }
+        return;
+    }
+    vector<bool> v(n, false);
+    cout << k << " " << n - 1 << nl;
+    v[k] = true;
+    v[n - 1] = true;
+    for (ll i = n - 2; i >= 0; i--)
+    {
+        if (v[i] == true)
+            continue;
+        ll x = n - 1 - i;
+        if (v[x] == false)
+        {
+            cout << x << " " << i << nl;
+            v[i] = true;
+            v[x] = true;
+        }
+        else if (v[0] == false)
+        {
+            cout << "0"
+                 << " " << i << nl;
+            v[0] = true;
+            v[i] = true;
+        }
+    }
+}
 
 int main(int argc, char const *argv[])
 {
@@ -64,30 +137,7 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
-        cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
-        {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
-        }
-
-        cout << ans << '\n';
+        solve();
     }
     return 0;
 }

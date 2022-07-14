@@ -56,6 +56,25 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
+void dfs(vector<vector<ll>> &e, ll u, ll par, vector<bool> &vis, vector<ll> &temp, vector<vector<ll>> &ans)
+{
+    if (vis[u] == false)
+        temp.push_back(u);
+    vis[u] = true;
+    if (e[u].size() == 0)
+    {
+        if (temp.size() > 0)
+            ans.push_back(temp);
+        temp.clear();
+        return;
+    }
+    for (auto v : e[u])
+    {
+        if (v != par)
+            dfs(e, v, u, vis, temp, ans);
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     fast_io;
@@ -64,30 +83,38 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
+        ll n;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        vector<vector<ll>> v(n + 1);
+        ll root = -1;
+        for (ll i = 1; i <= n; i++)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            ll x;
+            cin >> x;
+            if (i == x)
+                root = i;
+            v[x].pb(i);
         }
-
-        cout << ans << '\n';
+        if (n == 1)
+        {
+            cout << root << nl;
+            cout << root << nl;
+            cout << root << nl;
+            continue;
+        }
+        vector<bool> vis(n + 1, false);
+        vector<vector<ll>> ans;
+        vector<ll> temp;
+        dfs(v, root, -1, vis, temp, ans);
+        cout << ans.size() << nl;
+        for (auto i : ans)
+        {
+            cout << i.size() << nl;
+            for (auto j : i)
+                cout << j << " ";
+            cout << nl;
+        }
+        cout << nl;
     }
     return 0;
 }

@@ -55,7 +55,6 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
-
 int main(int argc, char const *argv[])
 {
     fast_io;
@@ -64,30 +63,12 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
-        cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
-        {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
-        }
-
-        cout << ans << '\n';
+        ll a, b, c;
+        cin >> a >> b >> c;
+        ll x = a + b + c;
+        ll y = b + c;
+        ll z = c;
+        cout << x << " " << y << " " << z << nl;
     }
     return 0;
 }

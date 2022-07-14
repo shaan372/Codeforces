@@ -56,6 +56,36 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
+pair<ll, ll> solve(vector<ll> &v)
+{
+    ll n = v.size();
+    vector<ll> a(n);
+    for (ll i = 0; i < n; i++)
+        a[i] = v[i];
+    sort(all(a));
+    vector<ll> temp;
+    for (ll i = 0; i < n; i++)
+    {
+        if (a[i] != v[i])
+            temp.push_back(i);
+    }
+    if (temp.size() == 0)
+        return {0, 0};
+    pair<ll, ll> ans = {temp.front(), temp.back()};
+    return ans;
+}
+bool check(vector<vector<ll>> &v)
+{
+    ll n = v.size();
+    pair<ll, ll> p = {0, 0};
+    for (ll i = 0; i < n; i++)
+    {
+        auto x = solve(v[i]);
+        if (x != p)
+            return false;
+    }
+    return true;
+}
 int main(int argc, char const *argv[])
 {
     fast_io;
@@ -64,30 +94,30 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
-        cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        ll n, m;
+        cin >> n >> m;
+        vector<vector<ll>> v(n, vector<ll>(m));
+        for (ll i = 0; i < n; i++)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            for (ll j = 0; j < m; j++)
+                cin >> v[i][j];
         }
-
-        cout << ans << '\n';
+        pair<ll, ll> p, p1 = {0, 0};
+        for (ll i = 0; i < n; i++)
+        {
+            p = solve(v[i]);
+            if (p != p1)
+                break;
+        }
+        for (ll i = 0; i < n; i++)
+            swap(v[i][p.ff], v[i][p.ss]);
+        if (check(v))
+        {
+            ll x = 1 + min(p.ff, p.ss), y = 1 + max(p.ff, p.ss);
+            cout << x << " " << y << nl;
+            continue;
+        }
+        cout << "-1" << nl;
     }
     return 0;
 }

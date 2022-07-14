@@ -60,34 +60,20 @@ int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
-    cin >> t;
-    while (t--)
+    ll n;
+    cin >> n;
+    vector<ll> v(n);
+    for (auto &i : v)
+        cin >> i;
+    sort(all(v));
+    vector<vector<ll>> dp(n + 1, vector<ll>(n + 1, 0));
+    for (ll i = n - 1; i >= 0; i--)
     {
-        int n;
-        cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        for (ll j = i; j < n; j++)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            dp[i][j] = min(dp[i + 1][j], dp[i][j - 1]) + v[j] - v[i];
         }
-
-        cout << ans << '\n';
     }
+    cout << dp[0][n - 1];
     return 0;
 }

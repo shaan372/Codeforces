@@ -64,30 +64,23 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
+        ll n;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        map<ll, ll> m;
+        for (ll i = 0; i < n; i++)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            ll x;
+            cin >> x;
+            m[x]++;
         }
-
-        cout << ans << '\n';
+        ll a = 0, b = 0;
+        for (auto i : m)
+        {
+            a += (i.ss == 1);
+            b += (i.ss > 1);
+        }
+        ll ans = b + (a + 1) / 2;
+        cout << ans << nl;
     }
     return 0;
 }

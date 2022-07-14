@@ -64,30 +64,28 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
-        cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        ll n, q;
+        cin >> n >> q;
+        map<ll, ll> m1, m2;
+        for (ll i = 0; i < n; i++)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            ll x;
+            cin >> x;
+            if (m1.find(x) == m1.end())
+                m1[x] = i;
+            m2[x] = i;
         }
-
-        cout << ans << '\n';
+        while (q--)
+        {
+            ll a, b;
+            cin >> a >> b;
+            if (m1.find(a) == m1.end() || m1.find(b) == m1.end())
+                cout << "NO" << nl;
+            else if (a == b || m1[a] < m2[b])
+                cout << "YES" << nl;
+            else
+                cout << "NO" << nl;
+        }
     }
     return 0;
 }

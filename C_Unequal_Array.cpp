@@ -64,30 +64,28 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
+        ll n;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        vector<ll> v(n);
+        for (auto &i : v)
+            cin >> i;
+        ll x = -1, y = -1, ans = 0;
+        for (ll i = 1; i < n; i++)
         {
-            if (b[x + 1] == b[1])
+            if (v[i - 1] == v[i])
             {
-                x++;
-                continue;
+                if (x == -1)
+                    x = i;
+                y = i;
             }
-            ans++;
-            x *= 2;
         }
-
-        cout << ans << '\n';
+        if (x == y)
+            cout << "0" << nl;
+        else
+        {
+            ans = max(1ll, y - x - 1ll);
+            cout << ans << nl;
+        }
     }
     return 0;
 }

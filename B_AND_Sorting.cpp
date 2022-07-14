@@ -64,30 +64,22 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        int n;
+        ll n;
         cin >> n;
-
-        vector<int> a(n + 1);
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-
-        vector<int> b = a;
-        reverse(b.begin() + 1, b.end());
-
-        int ans = 0, x = 1;
-
-        while (x < n)
+        vector<ll> v(n);
+        for (auto &i : v)
+            cin >> i;
+        auto a = v;
+        sort(all(a));
+        ll x = -1;
+        for (ll i = 0; i < n; i++)
         {
-            if (b[x + 1] == b[1])
-            {
-                x++;
-                continue;
-            }
-            ans++;
-            x *= 2;
+            if (a[i] != v[i] && x == -1)
+                x = a[i];
+            else if (a[i] != v[i] && x != -1)
+                x = x & a[i];
         }
-
-        cout << ans << '\n';
+        cout << x << nl;
     }
     return 0;
 }
