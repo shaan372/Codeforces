@@ -49,7 +49,6 @@ ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n
 bool isPrime(int n){if (n <= 1) return false; for (int i = 2; i < n; i++)if (n % i == 0) return false; return true;}
 int binExpo(int a, int b){ if(b==0) return 1;if(b==1) return a; int r = binExpo(a, b/2); if(b%2==0) return (r%M * r%M)%M; else return (r%M*r%M*a%M)%M;}
 int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
-vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
 
 
 /*---------------------------------------------------------------------------------------------------------------*/
@@ -57,34 +56,58 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
-ll solve(string &s, ll i, ll s1, ll s2, ll n, ll m)
+void solve()
 {
-    if (i == 10)
-        return 0;
-    if (s1 > s2 && s1 - s2 > m)
-        return 0;
-    if (s2 > s1 && s2 - s1 > n)
-        return 0;
-    if (i % 2 == 0)
+    ll n;
+    cin >> n;
+    vector<ll> a, v1, v2;
+    for (ll i = 0; i < n; i++)
     {
-        ll op1;
-        if (s[i] == '0')
-            op1 = 1 + solve(s, i + 1, s1, s2, n, m - 1);
-        else if (s[i] == '1')
-            op1 = 1 + solve(s, i + 1, s1, s2 + 1, n, m - 1);
+        ll x;
+        cin >> x;
+        if (x > 0)
+            v1.pb(x);
+        else if (x < 0)
+            v2.pb(x);
         else
-            op1 = 1 + min(solve(s, i + 1, s1, s2, n, m - 1), solve(s, i + 1, s1, s2 + 1, n, m - 1));
-        return op1;
+        {
+            if (a.size() < 2)
+                a.pb(x);
+        }
     }
-    ll ans;
-    if (s[i] == '0')
-        ans = 1 + solve(s, i + 1, s1, s2, n - 1, m);
-    else if (s[i] == '1')
-        ans = 1 + solve(s, i + 1, s1 + 1, s2, n - 1, m);
-    else
-        ans = 1 + min(solve(s, i + 1, s1, s2, n - 1, m), solve(s, i + 1, s1 + 1, s2, n - 1, m));
-    return ans;
+    if (v1.size() > 2 || v2.size() > 2)
+    {
+        cout << "NO" << nl;
+        return;
+    }
+    for (auto i : v1)
+        a.pb(i);
+    for (auto i : v2)
+        a.pb(i);
+    n = a.size();
+    for (ll i = 0; i < n - 1; i++)
+    {
+        for (ll j = i + 1; j < n; j++)
+        {
+            for (ll k = j + 1; k < n; k++)
+            {
+                bool fl = false;
+                for (ll l = 0; l < n; l++)
+                {
+                    if (a[i] + a[j] + a[k] == a[l])
+                        fl = true;
+                }
+                if (fl == false)
+                {
+                    cout << "NO" << nl;
+                    return;
+                }
+            }
+        }
+    }
+    cout << "YES" << nl;
 }
+
 int main(int argc, char const *argv[])
 {
     fast_io;
@@ -93,10 +116,7 @@ int main(int argc, char const *argv[])
     cin >> t;
     while (t--)
     {
-        string s;
-        cin >> s;
-        ll ans = solve(s, 0, 0, 0, 5, 5);
-        cout << ans << nl;
+        solve();
     }
     return 0;
 }
