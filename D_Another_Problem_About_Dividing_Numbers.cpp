@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 
 #define ll long long
+#define ull unsigned long long
 #define vi vector<ll>
 #define gi greater<ll>
 #define maxheap priority_queue<ll>
@@ -18,10 +19,11 @@
 #define f(i,a,n) for(ll i=a;i<n;i++)
 #define fi(i,n,a) for(ll i=n-1;i>=0;i--)
 #define all(x) (x).begin(), (x).end()
-#define prDouble(x) cout << fixed << setprecision(10) << x
+#define prDouble(x,y) cout << fixed << setprecision(y) << x
 #define fast_io ios_base::sync_with_stdio(false);cin.tie(NULL)
+#define fast_io2 cin.exceptions(cin.failbit);
 #define M 1000000007
-#define inf 1e18
+#define inf 9223372036854775807
 #define MOD 998244353
 #define nl endl
 
@@ -45,6 +47,9 @@ ll mod_sub(ll a, ll b, ll m) {a = a % m; b = b % m; return (((a - b) % m) + m) %
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
 bool isPrime(int n){if (n <= 1) return false; for (int i = 2; i < n; i++)if (n % i == 0) return false; return true;}
+int binExpo(int a, int b){ if(b==0) return 1;if(b==1) return a; int r = binExpo(a, b/2); if(b%2==0) return (r%M * r%M)%M; else return (r%M*r%M*a%M)%M;}
+int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
+vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
 
 
 /*---------------------------------------------------------------------------------------------------------------*/
@@ -52,100 +57,53 @@ bool isPrime(int n){if (n <= 1) return false; for (int i = 2; i < n; i++)if (n %
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
-
+ll solve(vector<ll> &v, ll n)
+{
+    ll ans = 0;
+    for (auto i : v)
+    {
+        if (i > n)
+            break;
+        while (n % i == 0)
+        {
+            ans++;
+            n = n / i;
+        }
+    }
+    if (n > 1)
+        ans++;
+    return ans;
+}
 
 int main(int argc, char const *argv[])
 {
-fast_io;
-int n=1000009;
-        bool prime[n + 1];
-        memset(prime, true, sizeof(prime));
- 
-        for (int p = 2; p * p <= n; p++)
+    fast_io;
+    fast_io2;
+    ll t;
+    cin >> t;
+    ll max_n = 1e9 + 6;
+    auto v = sieve(sqrt(max_n));
+    while (t--)
+    {
+        ll a, b, k;
+        cin >> a >> b >> k;
+        if (k == 1)
         {
-            if (prime[p] == true)
-            {
-                for (int i = p * p; i <= n; i += p)
-                    prime[i] = false;
-            }
+            if (a == 1 && b == 1)
+                cout << "NO" << nl;
+            else if (a == b)
+                cout << "NO" << nl;
+            else if (a % b == 0 || b % a == 0)
+                cout << "YES" << nl;
+            else
+                cout << "NO" << nl;
+            continue;
         }
-        vector<int> x;
-        for(int i=2;i<n;i++){
-            if(prime[i]==true){
-                x.push_back(i);
-            }
-        }
- 
-        int t;
-        cin>>t;
-        while(t--){
-            ll a,b,k;
-            cin>>a>>b>>k;
-            if(k==1){
-                if(a==1 && b==1){
-                    cout<<"NO\n";
-                    continue;
-                }
-                if(a==b){
-                    cout<<"NO\n";
-                    continue;
-                }
-                if(a%b==0 || b%a==0){
-                    cout<<"YES\n";
-                }
-                else{
-                    cout<<"NO\n";
-                }
-                continue;
-            }
-            ll sum=0;
- 
- 
-                while (a%2 == 0)
-                {
-                    a = a/2;
-                    sum++;
-                }
- 
-                for (int i = 0; x[i]<= sqrt(a) && i<x.size(); i++)
-                {
-                    while (a%x[i] == 0)
-                    {
-                        sum++;
-                        a = a/x[i];
-                    }
-                }
- 
-                if (a > 2){
-                    sum++;
-                }
- 
-                while (b%2 == 0)
-                {
-                    b = b/2;
-                    sum++;
-                }
- 
-                for (int i = 0; x[i] <= sqrt(b) && i<x.size(); i++)
-                {
-                    while (b%x[i] == 0)
-                    {
-                        sum++;
-                        b = b/x[i];
-                    }
-                }
- 
-                if (b > 2){
-                    sum++;
-                }
- 
-            if(k<=sum){
-                cout<<"YES\n";
-            }
-            else{
-                cout<<"NO\n";
-            }
- 
-        }
-return 0;
+        ll temp = solve(v, a) + solve(v, b);
+        if (temp >= k)
+            cout << "YES" << nl;
+        else
+            cout << "NO" << nl;
+    }
+    return 0;
 }
