@@ -23,7 +23,8 @@ using namespace __gnu_pbds;
 
 template <class T> using maxheap = priority_queue<T>;
 template <class T> using minheap = priority_queue<T, vector<T>, greater<T>>;
-template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree_tag, tree_order_statistics_node_update>; //find_by_order, order_of_key
+template <class T> using pbds = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>; //find_by_order, order_of_key
+
 
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -33,7 +34,7 @@ ll gcd(ll a, ll b){if (b % a == 0){return a;}else{return gcd(b % a, a);}}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
 ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
-ll binExpo(ll a, ll b){ if(b==0) return 1;if(b==1) return a; int r = binExpo(a, b/2); if(b%2==0) return (r%M * r%M)%M; else return (r%M*r%M*a%M)%M;}
+ll binExpo(ll a, ll b){ if(b==0) return 1;if(b==1) return a; ll r = binExpo(a, b/2); if(b%2==0) return (r%M * r%M)%M; else return (r%M*r%M*a%M)%M;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
 vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
 
@@ -42,29 +43,17 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    vector<ll> a(x + 1, 0);
-    for (ll i = 1; i <= x; i++)
-        a[i] = a[i - 1] + p[i - 1];
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    ll n, m;
+    cin >> n >> m;
+    ll temp = 0;
+    for (ll i = 0; i < m; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = a[j] + (a[x] - a[j]) - (x - j) * i;
-        ans = min(ans, temp);
+        ll l, r, x;
+        cin >> l >> r >> x;
+        temp |= x;
     }
+    ll x = binExpo(2, n - 1);
+    ll ans = (temp % M * x % M) % M;
     cout << ans << nl;
 }
 
@@ -74,8 +63,10 @@ int main(int argc, char const *argv[])
     fast_io2;
     ll t;
     cin >> t;
-    // t = 1;
+    // ll t = 1;
     while (t--)
+    {
         solve();
+    }
     return 0;
 }

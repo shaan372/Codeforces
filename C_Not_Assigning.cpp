@@ -44,28 +44,31 @@ void solve()
 {
     ll n;
     cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    vector<ll> a(x + 1, 0);
-    for (ll i = 1; i <= x; i++)
-        a[i] = a[i - 1] + p[i - 1];
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    vector<vector<array<ll, 2>>> g(n);
+    vector<ll> deg(n), a(n - 1);
+    for (int u, v, i = 0; i < n - 1; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = a[j] + (a[x] - a[j]) - (x - j) * i;
-        ans = min(ans, temp);
+        cin >> u >> v;
+        g[--u].push_back({--v, i});
+        g[v].push_back({u, i});
+        deg[u]++;
+        deg[v]++;
     }
-    cout << ans << nl;
+    if (*max_element(deg.begin(), deg.end()) > 2)
+        return cout << -1 << '\n', void();
+    function<void(int, int, int c)> dfs = [&](int v, int p, int c)
+    {
+        for (auto &[u, i] : g[v])
+            if (u != p)
+            {
+                a[i] = c;
+                dfs(u, v, c ^ 1);
+            }
+    };
+    dfs(min_element(deg.begin(), deg.end()) - deg.begin(), -1, 0);
+    for (auto &x : a)
+        cout << x + 2 << ' ';
+    cout << '\n';
 }
 
 int main(int argc, char const *argv[])
@@ -74,7 +77,7 @@ int main(int argc, char const *argv[])
     fast_io2;
     ll t;
     cin >> t;
-    // t = 1;
+    // ll t = 1;
     while (t--)
         solve();
     return 0;

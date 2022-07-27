@@ -42,28 +42,28 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    vector<ll> a(x + 1, 0);
-    for (ll i = 1; i <= x; i++)
-        a[i] = a[i - 1] + p[i - 1];
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    ll n, k;
+    cin >> n >> k;
+    vector<ll> a(n);
+    ll ans = 0;
+    for (ll i = 0; i < n; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = a[j] + (a[x] - a[j]) - (x - j) * i;
-        ans = min(ans, temp);
+        cin >> a[i];
+        ans += a[i] / k;
+        a[i] = a[i] % k;
+    }
+    sort(all(a));
+    ll i = 0, j = n - 1;
+    while (i < j)
+    {
+        if (a[i] + a[j] >= k)
+        {
+            ans += (a[i] + a[j]) / k;
+            i++;
+            j--;
+        }
+        else
+            i++;
     }
     cout << ans << nl;
 }
@@ -74,7 +74,7 @@ int main(int argc, char const *argv[])
     fast_io2;
     ll t;
     cin >> t;
-    // t = 1;
+    // ll t = 1;
     while (t--)
         solve();
     return 0;
