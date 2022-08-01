@@ -47,22 +47,24 @@ void solve()
     vector<ll> v(n);
     for (auto &i : v)
         cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    for (ll i = 0; i < n; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = n - (x - j) * i;
-        ans = min(ans, temp);
+        bool flag = true;
+        for (ll j = i + 2; j >= 2; j--)
+        {
+            if (v[i] % j != 0)
+            {
+                flag = false;
+                break;
+            }
+        }
+        if (flag)
+        {
+            cout << "NO" << nl;
+            return;
+        }
     }
-    cout << ans << nl;
+    cout << "YES" << nl;
 }
 
 int main(int argc, char const *argv[])

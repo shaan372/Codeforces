@@ -42,27 +42,31 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    ll n, m;
+    cin >> n >> m;
+    string a, b;
+    cin >> a >> b;
+    if (m > n)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = n - (x - j) * i;
-        ans = min(ans, temp);
+        cout << "NO" << nl;
+        return;
     }
-    cout << ans << nl;
+    string str1 = a.substr(n - m + 1, m - 1);
+    string str2 = b.substr(1, m - 1);
+    if (str1 != str2)
+    {
+        cout << "NO" << nl;
+        return;
+    }
+    for (ll i = 0; i < n - m + 1; i++)
+    {
+        if (a[i] == b[0])
+        {
+            cout << "YES" << nl;
+            return;
+        }
+    }
+    cout << "NO" << nl;
 }
 
 int main(int argc, char const *argv[])

@@ -40,29 +40,60 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+void build(ll l, ll r, ll i, vector<ll> &v, vector<ll> &seg)
+{
+    if (l == r)
+    {
+        seg[i] = v[l];
+        return;
+    }
+    ll mid = (l + r) >> 1;
+    build(l, mid, 2 * i + 1, v, seg);
+    build(mid + 1, r, 2 * i + 2, v, seg);
+    seg[i] = max(seg[2 * i + 1], seg[2 * i + 2]);
+}
+ll get_max(ll l, ll r, ll i, vector<ll> &seg, ll left, ll right)
+{
+    if (l >= left && r <= right)
+        return seg[i];
+    if (r < left || l > right)
+        return INT_MIN;
+    ll mid = (l + r) >> 1;
+    ll le = get_max(l, mid, 2 * i + 1, seg, left, right);
+    ll ri = get_max(mid + 1, r, 2 * i + 2, seg, left, right);
+    return max(le, ri);
+}
 void solve()
 {
-    ll n;
-    cin >> n;
-    vector<ll> v(n);
+    ll n, m;
+    cin >> n >> m;
+    vector<ll> v(m);
+    vector<ll> seg(4 * m + 1, INT_MIN);
     for (auto &i : v)
         cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    ll q;
+    cin >> q;
+    build(0, m - 1, 0, v, seg);
+    while (q--)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = n - (x - j) * i;
-        ans = min(ans, temp);
+        ll x1, x2, y1, y2, k;
+        cin >> x1 >> y1 >> x2 >> y2 >> k;
+        if (abs(x1 - x2) % k != 0 || abs(y1 - y2) % k != 0)
+        {
+            cout << "NO" << nl;
+            continue;
+        }
+        ll x = n - x1;
+        x = x - x % k;
+        x += x1;
+        ll y = get_max(0, m - 1, 0, seg, min(y1, y2) - 1, max(y1, y2) - 1);
+        if (x <= y)
+        {
+            cout << "NO" << nl;
+            continue;
+        }
+        cout << "YES" << nl;
     }
-    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -70,8 +101,8 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t;
-    cin >> t;
-    // t = 1;
+    // cin >> t;
+    t = 1;
     while (t--)
         solve();
     return 0;

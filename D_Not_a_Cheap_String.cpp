@@ -42,25 +42,33 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    string s;
+    cin >> s;
+    ll p;
+    cin >> p;
+    ll n = s.length();
+    vector<pair<ll, ll>> v(n);
+    for (ll i = 0; i < n; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = n - (x - j) * i;
-        ans = min(ans, temp);
+        v[i].ff = s[i] - 'a' + 1;
+        v[i].ss = i;
+    }
+    sort(all(v));
+    ll sum = 0;
+    string ans;
+    vector<bool> vis(n, false);
+    for (ll i = 0; i < n; i++)
+    {
+        if (sum + v[i].ff <= p)
+        {
+            sum += v[i].ff;
+            vis[v[i].ss] = true;
+        }
+    }
+    for (ll i = 0; i < n; i++)
+    {
+        if (vis[i] == true)
+            ans.pb(s[i]);
     }
     cout << ans << nl;
 }

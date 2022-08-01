@@ -39,30 +39,41 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-
+void intersect(vector<pair<ll, ll>> &v, ll x, ll y)
+{
+    if (x <= v.back().ff && y >= v.back().ff)
+    {
+        x = max(v.back().ff, x);
+        y = min(v.back().ss, y);
+        v.ppb();
+        v.pb({x, y});
+        return;
+    }
+    if (x <= v.back().ss && y >= v.back().ss)
+    {
+        x = max(v.back().ff, x);
+        y = min(v.back().ss, y);
+        v.ppb();
+        v.pb({x, y});
+        return;
+    }
+    v.pb({x, y});
+}
 void solve()
 {
-    ll n;
-    cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    ll n, x;
+    cin >> n >> x;
+    vector<pair<ll, ll>> v;
+    for (ll i = 0; i < n; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = n - (x - j) * i;
-        ans = min(ans, temp);
+        ll y;
+        cin >> y;
+        if (i == 0)
+            v.pb({y - x, y + x});
+        else
+            intersect(v, y - x, y + x);
     }
-    cout << ans << nl;
+    cout << v.size() - 1 << nl;
 }
 
 int main(int argc, char const *argv[])

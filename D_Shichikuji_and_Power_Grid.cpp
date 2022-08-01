@@ -40,29 +40,84 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+const ll max_n = 2e3 + 10;
+ll sz[max_n];
+ll par[max_n];
+void make(ll u)
+{
+    par[u] = u;
+    sz[u] = 1;
+}
+ll find(ll u)
+{
+    if (par[u] == u)
+        return u;
+    return par[u] = find(par[u]);
+}
+void Union(ll u, ll v)
+{
+    u = find(u);
+    v = find(v);
+    if (u == v)
+        return;
+    if (u < v)
+        swap(u, v);
+    par[v] = u;
+    sz[u] += sz[v];
+}
 void solve()
 {
     ll n;
     cin >> n;
-    vector<ll> v(n);
-    for (auto &i : v)
-        cin >> i;
-    map<ll, ll> m;
-    for (auto i : v)
-        m[i]++;
-    vector<ll> p;
-    for (auto i : m)
-        p.pb(i.ss);
-    sort(all(p));
-    ll x = p.size();
-    ll ans = INT_MAX;
-    for (ll i = 0; i <= n; i++)
+    vector<pair<ll, ll>> v(n + 1);
+    for (ll i = 1; i <= n; i++)
+        cin >> v[i].ff >> v[i].ss;
+    vector<ll> c(n + 1), k(n + 1);
+    for (ll i = 1; i <= n; i++)
+        cin >> c[i];
+    for (ll i = 1; i <= n; i++)
+        cin >> k[i];
+    vector<pair<ll, pair<ll, ll>>> edges;
+    for (ll i = 1; i <= n; i++)
+        edges.pb({c[i], {0, i}});
+    for (ll i = 1; i <= n; i++)
     {
-        ll j = lower_bound(all(p), i) - p.begin();
-        ll temp = n - (x - j) * i;
-        ans = min(ans, temp);
+        for (ll j = i + 1; j <= n; j++)
+        {
+            ll d = abs(v[i].ff - v[j].ff) + abs(v[i].ss - v[j].ss);
+            ll temp = (k[i] + k[j]) * d;
+            edges.pb({temp, {i, j}});
+        }
     }
+    for (ll i = 0; i <= n; i++)
+        make(i);
+    sort(all(edges));
+    ll ans = 0;
+    vector<ll> p;
+    vector<pair<ll, ll>> e;
+    for (auto i : edges)
+    {
+        ll wt = i.ff;
+        ll x = i.ss.ff;
+        ll y = i.ss.ss;
+        if (find(x) == find(y))
+            continue;
+        Union(x, y);
+        ans += wt;
+        if (x == 0 || y == 0)
+            p.pb(max(x, y));
+        else
+            e.pb({x, y});
+    }
+    sort(all(p));
     cout << ans << nl;
+    cout << p.size() << nl;
+    for (auto i : p)
+        cout << i << " ";
+    cout << nl;
+    cout << e.size() << nl;
+    for (auto i : e)
+        cout << i.ff << " " << i.ss << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -70,8 +125,8 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t;
-    cin >> t;
-    // t = 1;
+    // cin >> t;
+    t = 1;
     while (t--)
         solve();
     return 0;
