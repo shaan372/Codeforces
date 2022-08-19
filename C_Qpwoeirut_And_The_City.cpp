@@ -39,67 +39,39 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int ans = 0;
-bool ok = true;
-
-void Find(int a, int b, string &t, vector<string> &str, vector<pair<int, int>> &match)
+ll get(ll ind, vector<ll> &v)
 {
-    int Max = 0, id = -1, pos = -1;
-    for (int i = a; i <= b; i++)
-    {
-        for (int j = 0; j < str.size(); j++)
-        {
-            string s = str[j];
-            if (i + s.length() > t.length() || i + s.length() <= b)
-                continue;
-            if (t.substr(i, s.length()) == s)
-            {
-                if (i + s.length() > Max)
-                {
-                    Max = i + s.length();
-                    id = j;
-                    pos = i;
-                }
-            }
-        }
-    }
-    if (id == -1)
-    {
-        ok = false;
-        return;
-    }
-    else
-    {
-        match.emplace_back(id, pos);
-        ans++;
-        if (Max == t.length())
-            return;
-        else
-            Find(max(pos + 1, b + 1), Max, t, str, match);
-    }
+    ll ans = max(v[ind + 1], v[ind - 1]) - v[ind] + 1;
+    ans = max(0 * 1ll, ans);
+    return ans;
 }
 
 void run_case()
 {
-    string s;
-    cin >> s;
     ll n;
     cin >> n;
-    ans = 0;
-    ok = true;
-    vector<string> v(n);
+    vector<ll> v(n);
     for (auto &i : v)
         cin >> i;
-    vector<pair<int, int>> match;
-    Find(0, 0, s, v, match);
-    if (!ok)
-        cout << "-1\n";
-    else
+    if (n % 2 == 1)
     {
-        cout << ans << endl;
-        for (auto &p : match)
-            cout << p.first + 1 << ' ' << p.second + 1 << endl;
+        ll ans = 0;
+        for (ll i = 1; i < n - 1; i += 2)
+            ans += get(i, v);
+        cout << ans << nl;
+        return;
     }
+    ll tot = 0;
+    for (ll i = 1; i < n - 1; i += 2)
+        tot += get(i, v);
+    ll ans = tot;
+    for (ll i = n - 2; i >= 1; i -= 2)
+    {
+        tot -= get(i - 1, v);
+        tot += get(i, v);
+        ans = min(ans, tot);
+    }
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])

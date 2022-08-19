@@ -39,67 +39,59 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int ans = 0;
-bool ok = true;
-
-void Find(int a, int b, string &t, vector<string> &str, vector<pair<int, int>> &match)
-{
-    int Max = 0, id = -1, pos = -1;
-    for (int i = a; i <= b; i++)
-    {
-        for (int j = 0; j < str.size(); j++)
-        {
-            string s = str[j];
-            if (i + s.length() > t.length() || i + s.length() <= b)
-                continue;
-            if (t.substr(i, s.length()) == s)
-            {
-                if (i + s.length() > Max)
-                {
-                    Max = i + s.length();
-                    id = j;
-                    pos = i;
-                }
-            }
-        }
-    }
-    if (id == -1)
-    {
-        ok = false;
-        return;
-    }
-    else
-    {
-        match.emplace_back(id, pos);
-        ans++;
-        if (Max == t.length())
-            return;
-        else
-            Find(max(pos + 1, b + 1), Max, t, str, match);
-    }
-}
-
 void run_case()
 {
-    string s;
-    cin >> s;
-    ll n;
-    cin >> n;
-    ans = 0;
-    ok = true;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    vector<pair<int, int>> match;
-    Find(0, 0, s, v, match);
-    if (!ok)
-        cout << "-1\n";
-    else
+    ll n, k;
+    cin >> n >> k;
+    if (k % 2 == 1)
     {
-        cout << ans << endl;
-        for (auto &p : match)
-            cout << p.first + 1 << ' ' << p.second + 1 << endl;
+        cout << "YES" << nl;
+        for (ll i = 1; i < n; i += 2)
+            cout << i << " " << i + 1 << nl;
+        return;
     }
+    map<ll, vector<ll>> m;
+    for (ll i = 1; i <= n; i++)
+        m[i % 4].pb(i);
+    ll x = k % 4;
+    ll num = 2 * (n / 4);
+    ll rem = (n - num) / 2;
+    if (m[4 - x].size() != rem)
+    {
+        cout << "NO" << nl;
+        return;
+    }
+    vector<pair<ll, ll>> v;
+    vector<ll> vis(n + 1, 0);
+    for (ll i = 1; i <= n; i++)
+    {
+        if (i % 4 == 0)
+        {
+            v.pb({0, i});
+            vis[i] = 1;
+        }
+    }
+    for (auto i : m[4 - x])
+    {
+        v.pb({i, 0});
+        vis[i] = 1;
+    }
+    ll ind = 0;
+    for (ll i = 1; i <= n; i++)
+    {
+        if (vis[i] == 0)
+        {
+            if (v[ind].ss == 0)
+                v[ind].ss = i;
+            else if (v[ind].ff == 0)
+                v[ind].ff = i;
+            vis[i] = 1;
+            ind++;
+        }
+    }
+    cout << "YES" << nl;
+    for (auto i : v)
+        cout << i.ff << " " << i.ss << nl;
 }
 
 int main(int argc, char const *argv[])

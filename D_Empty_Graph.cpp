@@ -39,67 +39,60 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int ans = 0;
-bool ok = true;
-
-void Find(int a, int b, string &t, vector<string> &str, vector<pair<int, int>> &match)
-{
-    int Max = 0, id = -1, pos = -1;
-    for (int i = a; i <= b; i++)
-    {
-        for (int j = 0; j < str.size(); j++)
-        {
-            string s = str[j];
-            if (i + s.length() > t.length() || i + s.length() <= b)
-                continue;
-            if (t.substr(i, s.length()) == s)
-            {
-                if (i + s.length() > Max)
-                {
-                    Max = i + s.length();
-                    id = j;
-                    pos = i;
-                }
-            }
-        }
-    }
-    if (id == -1)
-    {
-        ok = false;
-        return;
-    }
-    else
-    {
-        match.emplace_back(id, pos);
-        ans++;
-        if (Max == t.length())
-            return;
-        else
-            Find(max(pos + 1, b + 1), Max, t, str, match);
-    }
-}
 
 void run_case()
 {
-    string s;
-    cin >> s;
-    ll n;
-    cin >> n;
-    ans = 0;
-    ok = true;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    vector<pair<int, int>> match;
-    Find(0, 0, s, v, match);
-    if (!ok)
-        cout << "-1\n";
-    else
+    ll n, k;
+    cin >> n >> k;
+    vector<ll> v(n + 1);
+    pbds<ll, less_equal<ll>> st;
+    for (int i = 1; i <= n; i++)
     {
-        cout << ans << endl;
-        for (auto &p : match)
-            cout << p.first + 1 << ' ' << p.second + 1 << endl;
+        cin >> v[i];
+        st.insert(v[i]);
     }
+    int ans = 0;
+    for (int a = 1; a < n; a++)
+    {
+        int b = a + 1;
+        for (int mask = 0; mask < 4; mask++)
+        {
+            int va = v[a], vb = v[b];
+            int q = k;
+            if (mask & 1)
+            {
+                st.erase(st.upper_bound(v[a]));
+                st.insert(1e9);
+                va = 1e9;
+                q--;
+            }
+            if (mask & 2)
+            {
+                st.erase(st.upper_bound(v[b]));
+                st.insert(1e9);
+                vb = 1e9;
+                q--;
+            }
+            if (q >= 0)
+            {
+                int here = min(va, vb);
+                int another = *st.find_by_order(q);
+                here = min(here, another * 2);
+                ans = max(ans, here);
+            }
+            if (mask & 1)
+            {
+                st.erase(st.upper_bound(1e9));
+                st.insert(v[a]);
+            }
+            if (mask & 2)
+            {
+                st.erase(st.upper_bound(1e9));
+                st.insert(v[b]);
+            }
+        }
+    }
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])

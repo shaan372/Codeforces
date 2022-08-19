@@ -39,66 +39,57 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int ans = 0;
-bool ok = true;
-
-void Find(int a, int b, string &t, vector<string> &str, vector<pair<int, int>> &match)
-{
-    int Max = 0, id = -1, pos = -1;
-    for (int i = a; i <= b; i++)
-    {
-        for (int j = 0; j < str.size(); j++)
-        {
-            string s = str[j];
-            if (i + s.length() > t.length() || i + s.length() <= b)
-                continue;
-            if (t.substr(i, s.length()) == s)
-            {
-                if (i + s.length() > Max)
-                {
-                    Max = i + s.length();
-                    id = j;
-                    pos = i;
-                }
-            }
-        }
-    }
-    if (id == -1)
-    {
-        ok = false;
-        return;
-    }
-    else
-    {
-        match.emplace_back(id, pos);
-        ans++;
-        if (Max == t.length())
-            return;
-        else
-            Find(max(pos + 1, b + 1), Max, t, str, match);
-    }
-}
 
 void run_case()
 {
-    string s;
-    cin >> s;
-    ll n;
-    cin >> n;
-    ans = 0;
-    ok = true;
-    vector<string> v(n);
-    for (auto &i : v)
+    ll n, q;
+    cin >> n >> q;
+    vector<ll> a(n);
+    for (auto &i : a)
         cin >> i;
-    vector<pair<int, int>> match;
-    Find(0, 0, s, v, match);
-    if (!ok)
-        cout << "-1\n";
-    else
+    stack<pair<ll, ll>> left, right;
+    vector<ll> l(n), r(n);
+    for (ll i = 0; i < n; i++)
     {
-        cout << ans << endl;
-        for (auto &p : match)
-            cout << p.first + 1 << ' ' << p.second + 1 << endl;
+        int x = -1;
+        while (left.size() > 0 && left.top().ff <= a[i])
+            left.pop();
+        if (left.size() > 0)
+            x = left.top().ss;
+        l[i] = x;
+        left.push({a[i], i});
+    }
+    for (ll i = n - 1; i >= 0; i--)
+    {
+        ll x = n;
+        while (right.size() > 0 && right.top().ff <= a[i])
+            right.pop();
+        if (right.size() > 0)
+            x = right.top().ss;
+        r[i] = x;
+        right.push({a[i], i});
+    }
+    while (q--)
+    {
+        ll i, k;
+        cin >> i >> k;
+        i--;
+        if (l[i] > -1)
+        {
+            cout << "0" << nl;
+            continue;
+        }
+        k = i >= 2 ? max(0 * 1ll, k - i + 1) : k;
+        if (k == 0 || (l[i] == -1 && r[i] == n))
+        {
+            cout << k << nl;
+            continue;
+        }
+        ll ans = r[i] - i - 1;
+        if (i >= 1)
+            ans++;
+        ans = min(ans, k);
+        cout << ans << nl;
     }
 }
 

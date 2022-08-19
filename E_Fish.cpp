@@ -39,66 +39,55 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int ans = 0;
-bool ok = true;
 
-void Find(int a, int b, string &t, vector<string> &str, vector<pair<int, int>> &match)
+double prob(vector<vector<double>> &v, ll j, ll mask, ll n)
 {
-    int Max = 0, id = -1, pos = -1;
-    for (int i = a; i <= b; i++)
+    ll k = __builtin_popcount(mask);
+    ll c = (k * (k - 1)) / 2;
+    double ans = 0;
+    for (ll i = 0; i < n; i++)
     {
-        for (int j = 0; j < str.size(); j++)
-        {
-            string s = str[j];
-            if (i + s.length() > t.length() || i + s.length() <= b)
-                continue;
-            if (t.substr(i, s.length()) == s)
-            {
-                if (i + s.length() > Max)
-                {
-                    Max = i + s.length();
-                    id = j;
-                    pos = i;
-                }
-            }
-        }
+        if (mask & (1 << i))
+            ans += v[i][j];
     }
-    if (id == -1)
-    {
-        ok = false;
-        return;
-    }
-    else
-    {
-        match.emplace_back(id, pos);
-        ans++;
-        if (Max == t.length())
-            return;
-        else
-            Find(max(pos + 1, b + 1), Max, t, str, match);
-    }
+    return ans / (c * 1.0);
 }
-
+double solve(vector<vector<double>> &v, ll mask, ll n, vector<double> &dp)
+{
+    ll x = __builtin_popcount(mask);
+    if (x == n)
+        return 1;
+    if (dp[mask] > -0.9)
+        return dp[mask];
+    double ans = 0;
+    for (ll i = 0; i < n; i++)
+    {
+        if (mask & (1 << i))
+            continue;
+        ll prev_mask = mask ^ (1 << i);
+        double prev = solve(v, prev_mask, n, dp);
+        double p = prob(v, i, prev_mask, n);
+        ans += p * prev;
+    }
+    dp[mask] = ans;
+    return ans;
+}
 void run_case()
 {
-    string s;
-    cin >> s;
     ll n;
     cin >> n;
-    ans = 0;
-    ok = true;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    vector<pair<int, int>> match;
-    Find(0, 0, s, v, match);
-    if (!ok)
-        cout << "-1\n";
-    else
+    vector<vector<double>> v(n, vector<double>(n));
+    for (ll i = 0; i < n; i++)
     {
-        cout << ans << endl;
-        for (auto &p : match)
-            cout << p.first + 1 << ' ' << p.second + 1 << endl;
+        for (ll j = 0; j < n; j++)
+            cin >> v[i][j];
+    }
+    ll mask = (1 << n);
+    vector<double> dp(mask, -1.0);
+    for (ll i = 0; i < n; i++)
+    {
+        double ans = solve(v, 1 << i, n, dp);
+        prDouble(ans, 6) << " ";
     }
 }
 
@@ -107,8 +96,8 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t;
-    cin >> t;
-    // t = 1;
+    // cin >> t;
+    t = 1;
     while (t--)
         run_case();
     return 0;
