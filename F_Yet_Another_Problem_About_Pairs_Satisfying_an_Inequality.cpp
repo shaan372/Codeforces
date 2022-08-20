@@ -42,24 +42,30 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void run_case()
 {
-    string s, t;
-    cin >> s >> t;
-    ll n = s.length();
-    ll m = t.length();
-    while (m > 0 && n > 0)
+    ll n;
+    cin >> n;
+    vector<ll> v(n);
+    for (auto &i : v)
+        cin >> i;
+    ll cnt = 0;
+    vector<ll> l, r;
+    for (ll i = 0; i < n; i++)
     {
-        if (s[n - 1] == t[m - 1])
+        if (v[i] - i - 1 < 0)
         {
-            n--;
-            m--;
+            l.pb(v[i]);
+            r.pb(i + 1);
         }
-        else
-            n -= 2;
     }
-    if (m == 0)
-        cout << "YES" << nl;
-    else
-        cout << "NO" << nl;
+    sort(all(l));
+    ll x = l.size();
+    ll ans = 0;
+    for (auto i : r)
+    {
+        ll ind = upper_bound(all(l), i) - l.begin();
+        ans += (x - ind);
+    }
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])

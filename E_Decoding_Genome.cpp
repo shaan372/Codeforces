@@ -40,26 +40,62 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+ll getId(char c)
+{
+    if (c >= 'a')
+        return c - 'a';
+    else
+        return c - 'A' + 26;
+}
+void build(vector<vector<ll>> &v, vector<string> &m)
+{
+    for (auto i : m)
+        v[getId(i[0])][getId(i[1])] = 0;
+}
+vector<vector<ll>> square(vector<vector<ll>> &a, vector<vector<ll>> &b, ll m)
+{
+    vector<vector<ll>> res(m, vector<ll>(m, 0));
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            for (int k = 0; k < m; k++)
+                res[i][j] = (res[i][j] % M + a[i][k] % M * b[k][j] % M) % M;
+        }
+    }
+    return res;
+}
+vector<vector<ll>> multiply(vector<vector<ll>> &v, ll p, ll m)
+{
+    vector<vector<ll>> res(m, vector<ll>(m, 0));
+    for (ll i = 0; i < m; i++)
+        res[i][i] = 1;
+    while (p > 0)
+    {
+        if (p & 1)
+            res = square(v, res, m);
+        v = square(v, v, m);
+        p >>= 1;
+    }
+    return res;
+}
 void run_case()
 {
-    string s, t;
-    cin >> s >> t;
-    ll n = s.length();
-    ll m = t.length();
-    while (m > 0 && n > 0)
+    ll n, m, k;
+    cin >> n >> m >> k;
+    vector<string> v(k);
+    for (auto &i : v)
+        cin >> i;
+    vector<vector<ll>> t(m, vector<ll>(m, 1));
+    build(t, v);
+    auto res = multiply(t, n - 1, m);
+    ll ans = 0;
+    for (auto i : res)
     {
-        if (s[n - 1] == t[m - 1])
-        {
-            n--;
-            m--;
-        }
-        else
-            n -= 2;
+        for (auto j : i)
+            ans = (ans % M + j % M) % M;
     }
-    if (m == 0)
-        cout << "YES" << nl;
-    else
-        cout << "NO" << nl;
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -67,8 +103,8 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t;
-    cin >> t;
-    // t = 1;
+    // cin >> t;
+    t = 1;
     while (t--)
         run_case();
     return 0;
