@@ -53,33 +53,33 @@ bool isPrime(int n){if (n <= 1) return false; for (int i = 2; i < n; i++)if (n %
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
 
-
-
 int main(int argc, char const *argv[])
 {
-fast_io;
-fast_io2;
-ll t;
-cin >> t;
-while (t--)
-{
-   ll n; 
-   cin>>n;
-   vi v(n);
-   for(auto &i:v) cin>>i;
-   sort(all(v));
-  reverse(all(v));
-  ll sca =0;
-  ll scb=0;
-  for(ll i=0;i<n;i+=2){
-      sca+=((v[i]%2==0)?v[i]:0);
-  }
-  for(ll i=1;i<n;i+=2){
-      scb+=((v[i]%2!=0)?v[i]:0);
-  }
-  if(sca>scb) cout<<"Alice"<<nl;
-  else if(sca==scb) cout<<"Tie"<<nl;
-  else cout<<"Bob"<<nl;
-}
-return 0;
+    fast_io;
+    fast_io2;
+    ll t;
+    cin >> t;
+    while (t--)
+    {
+        ll n;
+        cin >> n;
+        vi v(n);
+        for (auto &i : v)
+            cin >> i;
+        sort(all(v));
+        reverse(all(v));
+        ll sca = 0;
+        ll scb = 0;
+        for (ll i = 0; i < n; i += 2)
+            sca += ((v[i] % 2 == 0) ? v[i] : 0);
+        for (ll i = 1; i < n; i += 2)
+            scb += ((v[i] % 2 != 0) ? v[i] : 0);
+        if (sca > scb)
+            cout << "Alice" << nl;
+        else if (sca == scb)
+            cout << "Tie" << nl;
+        else
+            cout << "Bob" << nl;
+    }
+    return 0;
 }
