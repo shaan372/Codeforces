@@ -39,52 +39,30 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-
+ll solve(ll i, vector<ll> &v, ll flag, ll n, vector<vector<ll>> &dp)
+{
+    if (i == n)
+        return 0;
+    if (dp[i][flag] != -1)
+        return dp[i][flag];
+    ll ans = solve(i + 1, v, flag, n, dp);
+    if (flag == 1)
+        ans = max(ans, solve(i + 1, v, flag ^ 1, n, dp) - v[i]);
+    else
+        ans = max(ans, v[i] + solve(i + 1, v, flag ^ 1, n, dp));
+    dp[i][flag] = ans;
+    return ans;
+}
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
+    ll n, q;
+    cin >> n >> q;
+    vector<ll> v(n);
     for (auto &i : v)
         cin >> i;
-    if (v[0][0] == '1')
-    {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
-    }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+    vector<vector<ll>> dp(n, vector<ll>(2, -1));
+    ll ans = solve(0, v, 0, n, dp);
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])

@@ -40,50 +40,93 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void run_case()
+void build(ll i, ll l, ll r, vector<ll> &seg, vector<ll> &v)
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
+    if (l == r)
     {
-        cout << "-1" << nl;
+        seg[i] = v[l];
         return;
     }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
+    ll mid = (l + r) >> 1;
+    build(2 * i + 1, l, mid, seg, v);
+    build(2 * i + 2, mid + 1, r, seg, v);
+    seg[i] = seg[2 * i + 1] + seg[2 * i + 2];
+}
+void update(ll i, ll l, ll r, vector<ll> &seg, ll ind, ll val)
+{
+    if (l == r)
     {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
+        if (l == ind)
+            seg[i] = val;
+        return;
     }
-    cout << ans.size() << nl;
-    for (auto i : ans)
+    if (ind < l || ind > r)
+        return;
+    ll mid = (l + r) >> 1;
+    update(2 * i + 1, l, mid, seg, ind, val);
+    update(2 * i + 2, mid + 1, r, seg, ind, val);
+    seg[i] = seg[2 * i + 1] + seg[2 * i + 2];
+}
+ll query(ll i, ll l, ll r, vector<ll> &seg, ll low, ll high)
+{
+    if (l >= low && r <= high)
+        return seg[i];
+    if (r < low || l > high)
+        return 0;
+    ll mid = (l + r) >> 1;
+    ll left = query(2 * i + 1, l, mid, seg, low, high);
+    ll right = query(2 * i + 2, mid + 1, r, seg, low, high);
+    ll ans = left + right;
+    return ans;
+}
+void run_case()
+{
+    ll n, q;
+    cin >> n >> q;
+    map<ll, ll> row, col;
+    vector<ll> l(n, 1), h(n, 1);
+    vector<ll> r(4 * n + 1, 0), c(4 * n + 1, 0);
+    build(0, 0, n - 1, r, l);
+    build(0, 0, n - 1, c, h);
+    while (q--)
     {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
+        ll t;
+        cin >> t;
+        if (t == 1)
+        {
+            ll x, y;
+            cin >> x >> y;
+            x--;
+            y--;
+            row[x]++;
+            col[y]++;
+            update(0, 0, n - 1, r, x, 0);
+            update(0, 0, n - 1, c, y, 0);
+        }
+        else if (t == 2)
+        {
+            ll x, y;
+            cin >> x >> y;
+            x--;
+            y--;
+            row[x]--;
+            col[y]--;
+            if (row[x] == 0)
+                update(0, 0, n - 1, r, x, 1);
+            if (col[y] == 0)
+                update(0, 0, n - 1, c, y, 1);
+        }
+        else
+        {
+            ll x1, x2, y1, y2;
+            cin >> x1 >> y1 >> x2 >> y2;
+            ll temp1 = query(0, 0, n - 1, r, min(x1, x2) - 1, max(x1, x2) - 1);
+            ll temp2 = query(0, 0, n - 1, c, min(y1, y2) - 1, max(y1, y2) - 1);
+            if (temp1 == 0 || temp2 == 0)
+                cout << "Yes" << nl;
+            else
+                cout << "No" << nl;
+        }
     }
 }
 
@@ -91,9 +134,8 @@ int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
-    cin >> t;
-    // t = 1;
+    ll t = 1;
+    // cin >> t;
     while (t--)
         run_case();
     return 0;

@@ -42,49 +42,36 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
+    ll n;
+    cin >> n;
+    vector<ll> a(n), b(n), dmin(n), dmax(n);
+    for (auto &i : a)
         cin >> i;
-    if (v[0][0] == '1')
+    for (auto &i : b)
+        cin >> i;
+    list<ll> ls;
+    ll bptr = n - 1;
+    for (ll i = n - 1; i >= 0; --i)
     {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
+        while (bptr >= 0 && b[bptr] >= a[i])
         {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
+            ls.push_back(b[bptr]);
+            bptr--;
         }
+        dmin[i] = ls.back() - a[i];
+        dmax[i] = ls.front() - a[i];
+        ll a_used = n - i;
+        ll b_used = n - (bptr + 1);
+        if (a_used == b_used)
+            ls.clear();
     }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+
+    for (auto x : dmin)
+        cout << x << " ";
+    cout << nl;
+    for (auto x : dmax)
+        cout << x << " ";
+    cout << nl;
 }
 
 int main(int argc, char const *argv[])

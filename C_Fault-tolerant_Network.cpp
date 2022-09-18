@@ -42,58 +42,46 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
+    ll n;
+    cin >> n;
+    vector<ll> a(n), b(n);
+    for (auto &i : a)
         cin >> i;
-    if (v[0][0] == '1')
-    {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
-    }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+    for (auto &i : b)
+        cin >> i;
+    ll a0 = inf;
+    for (ll i = 0; i < n; i++)
+        a0 = min(a0, abs(a[0] - b[i]));
+    ll a1 = inf;
+    for (ll i = 0; i < n; i++)
+        a1 = min(a1, abs(a[n - 1] - b[i]));
+    ll b0 = inf;
+    for (ll i = 0; i < n; i++)
+        b0 = min(b0, abs(b[0] - a[i]));
+    ll b1 = inf;
+    for (ll i = 0; i < n; i++)
+        b1 = min(b1, abs(b[n - 1] - a[i]));
+    ll a0b0 = abs(a[0] - b[0]);
+    ll a0b1 = abs(a[0] - b[n - 1]);
+    ll a1b0 = abs(a[n - 1] - b[0]);
+    ll a1b1 = abs(a[n - 1] - b[n - 1]);
+    ll ans = inf;
+    ans = min(ans, a0 + a1 + b0 + b1);
+    ans = min(ans, a0b0 + a1 + b1);
+    ans = min(ans, a0b1 + a1 + b0);
+    ans = min(ans, a1b0 + a0 + b1);
+    ans = min(ans, a1b1 + a0 + b0);
+    ans = min(ans, a0b0 + a1b1);
+    ans = min(ans, a0b1 + a1b0);
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
+    ll t = 1;
     cin >> t;
-    // t = 1;
     while (t--)
         run_case();
     return 0;

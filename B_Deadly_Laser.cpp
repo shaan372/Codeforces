@@ -40,51 +40,44 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+bool solve1(ll n, ll m, ll x, ll y, ll d)
+{
+    for (ll i = 1; i <= n; i++)
+    {
+        if (abs(x - i) + abs(y - 1) <= d)
+            return false;
+    }
+    for (ll i = 1; i <= m; i++)
+    {
+        if (abs(x - n) + abs(y - i) <= d)
+            return false;
+    }
+    return true;
+}
+bool solve2(ll n, ll m, ll x, ll y, ll d)
+{
+    for (ll i = 1; i <= m; i++)
+    {
+        if (abs(x - 1) + abs(y - i) <= d)
+            return false;
+    }
+    for (ll i = 1; i <= n; i++)
+    {
+        if (abs(x - i) + abs(y - m) <= d)
+            return false;
+    }
+    return true;
+}
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
+    ll n, m, x, y, d;
+    cin >> n >> m >> x >> y >> d;
+    if (solve1(n, m, x, y, d) || solve2(n, m, x, y, d))
     {
-        cout << "-1" << nl;
+        cout << n + m - 2 << nl;
         return;
     }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
-    }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+    cout << "-1" << nl;
 }
 
 int main(int argc, char const *argv[])

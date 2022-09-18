@@ -40,60 +40,90 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+bool checker1(vector<ll> &v, ll n)
+{
+    ll sum = 0;
+    for (ll i = 0; i < n; i++)
+        sum += v[i];
+    ll x = v.front();
+    ll y = -1 * v.back();
+    ll cnt = 0;
+    for (ll i = 1; i < n - 1; i++)
+    {
+        if (v[i] == 0)
+            cnt++;
+    }
+    if (x == 1 && x == y && cnt != n - 2)
+        return true;
+    if (sum != 0)
+        return true;
+    return false;
+}
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
+    ll n;
+    cin >> n;
+    vector<ll> v(n);
     for (auto &i : v)
         cin >> i;
-    if (v[0][0] == '1')
+    if (checker1(v, n) == true)
     {
-        cout << "-1" << nl;
+        cout << "No" << nl;
         return;
     }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
+    if (count(all(v), 0) == n)
     {
-        for (ll j = m - 1; j >= 0; j--)
+        cout << "Yes" << nl;
+        return;
+    }
+    vector<ll> pos, neg;
+    for (ll i = 0; i < n; i++)
+    {
+        if (v[i] < 0)
+            neg.pb(i);
+        if (v[i] > 0)
+            pos.pb(i);
+    }
+    if (v[0] == 0)
+    {
+        cout << "No" << nl;
+        return;
+    }
+    v[0]--;
+    if (v[0] == 0)
+        pos.erase(pos.begin() + 0);
+    v[neg.back()]++;
+    if (v[neg.back()] == 0)
+        neg.ppb();
+    while (neg.size() > 0 && pos.size() > 0)
+    {
+        ll i = pos.back();
+        ll j = neg.back();
+        if (i > j)
         {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
+            cout << "No" << nl;
+            return;
         }
+        ll val = min(v[i], abs(v[j]));
+        v[i] -= val;
+        v[j] += val;
+        if (v[i] == 0)
+            pos.ppb();
+        if (v[j] == 0)
+            neg.ppb();
     }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+    if (count(all(v), 0) == n)
+        cout << "Yes" << nl;
+    else
+        cout << "No" << nl;
 }
 
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
+    ll t = 1;
     cin >> t;
-    // t = 1;
     while (t--)
         run_case();
     return 0;

@@ -40,51 +40,64 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+ll people(ll n, ll i, vector<ll> &v)
+{
+    ll temp1 = i;
+    ll temp2 = max(0 * 1ll, n - i - 1);
+    ll ans = max(temp1, temp2) - v[i];
+    return ans;
+}
+ll get(deque<ll> &q, vector<ll> &v, ll n)
+{
+    if (q.size() == 0)
+        return 0;
+    ll x = q.front();
+    ll y = q.back();
+    ll t1 = people(n, x, v);
+    ll t2 = people(n, y, v);
+    if (t1 >= t2)
+    {
+        q.pop_front();
+        return t1;
+    }
+    q.pop_back();
+    return t2;
+}
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
+    ll n;
+    cin >> n;
+    string s;
+    cin >> s;
+    string t;
+    for (ll i = 0; i < n / 2; i++)
+        t.pb('R');
+    for (ll i = n / 2; i < n; i++)
+        t.pb('L');
+    vector<ll> a(n);
+    ll temp = 0;
+    for (ll i = 0; i < n; i++)
     {
-        cout << "-1" << nl;
-        return;
+        ll temp1 = i;
+        ll temp2 = max(0 * 1ll, n - i - 1);
+        if (s[i] == 'L')
+            a[i] = temp1;
+        else if (s[i] == 'R')
+            a[i] = temp2;
+        temp += a[i];
     }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
+    deque<ll> q;
+    for (ll i = 0; i < n; i++)
     {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
+        if (s[i] != t[i])
+            q.push_back(i);
     }
-    cout << ans.size() << nl;
-    for (auto i : ans)
+    for (ll i = 0; i < n; i++)
     {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
+        temp += get(q, a, n);
+        cout << temp << " ";
     }
+    cout << nl;
 }
 
 int main(int argc, char const *argv[])

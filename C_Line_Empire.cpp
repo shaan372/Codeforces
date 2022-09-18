@@ -42,58 +42,25 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
-    {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
-    }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+    ll n, a, b;
+    cin >> n >> a >> b;
+    vector<ll> x(n + 1), p(n + 1);
+    x[0] = 0;
+    for (int i = 1; i <= n; i++)
+        cin >> x[i];
+    partial_sum(x.begin(), x.end(), p.begin());
+    ll ans = inf;
+    for (int i = 0; i <= n; i++)
+        ans = min(ans, (a + b) * (x[i] - x[0]) + b * (p[n] - p[i] - (n - i) * x[i]));
+    cout << ans << endl;
 }
 
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
+    ll t = 1;
     cin >> t;
-    // t = 1;
     while (t--)
         run_case();
     return 0;

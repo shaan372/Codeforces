@@ -40,60 +40,80 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void run_case()
+char find(map<char, multiset<ll>> &m, ll j)
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
+    char ans = '@';
+    for (char i = 'a'; i <= 'z'; i++)
     {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
+        if (m[i].find(j) != m[i].end())
         {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
+            ans = i;
+            break;
         }
     }
-    cout << ans.size() << nl;
-    for (auto i : ans)
+    return ans;
+}
+void update(map<char, multiset<ll>> &m, char l, char h)
+{
+    for (char i = l + 1; i <= h; i++)
     {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
+        for (auto j : m[i])
+            m[l].insert(j);
+        m.erase(i);
     }
+}
+void run_case()
+{
+    ll n, k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    map<char, multiset<ll>> m;
+    for (ll i = 0; i < n; i++)
+        m[s[i]].insert(i);
+    for (ll i = 0; i < n && k > 0; i++)
+    {
+        ll j = i;
+        while (j < n)
+        {
+            char ch = find(m, j);
+            if (ch - 'a' <= k)
+                j++;
+            else
+                break;
+        }
+        if (i == j)
+        {
+            char ch = find(m, i);
+            update(m, ch - k, ch);
+            k = 0;
+            continue;
+        }
+        char ch = 'a';
+        for (ll ind = i; ind < j; ind++)
+        {
+            char temp = find(m, ind);
+            ch = max(ch, temp);
+        }
+        i = max(i, j - 1);
+        k = k - (ch - 'a');
+        update(m, 'a', ch);
+    }
+    string ans(n, '*');
+    for (auto i : m)
+    {
+        for (auto j : i.ss)
+            ans[j] = i.ff;
+    }
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
+    ll t = 1;
     cin >> t;
-    // t = 1;
     while (t--)
         run_case();
     return 0;

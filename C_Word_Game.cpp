@@ -42,49 +42,34 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
+    ll n;
+    cin >> n;
+    map<string, vector<ll>> m;
+    for (ll i = 0; i < 3; i++)
     {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
+        for (ll j = 0; j < n; j++)
         {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
+            string s;
+            cin >> s;
+            m[s].pb(i);
         }
     }
-    cout << ans.size() << nl;
-    for (auto i : ans)
+    vector<ll> v(3, 0);
+    for (auto i : m)
     {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
+        if (i.ss.size() == 2)
+        {
+            v[i.ss[0]] += 1;
+            v[i.ss[1]] += 1;
+        }
+        else if (i.ss.size() == 1)
+        {
+            v[i.ss[0]] += 3;
+        }
     }
+    for (auto i : v)
+        cout << i << " ";
+    cout << nl;
 }
 
 int main(int argc, char const *argv[])

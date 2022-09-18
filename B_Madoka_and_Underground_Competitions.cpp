@@ -40,60 +40,57 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+void fill_col(vector<string> &v, ll n, ll k, ll r, ll c)
+{
+    ll i = c, j = c;
+    while (i >= 0)
+    {
+        v[r][i] = 'X';
+        i = i - k;
+    }
+    while (j < n)
+    {
+        v[r][j] = 'X';
+        j = j + k;
+    }
+}
+void fill_daig(vector<string> &v, ll r, ll c, ll n, ll k)
+{
+    ll i = r, j = c;
+    while (i >= 0 && i < n)
+    {
+        fill_col(v, n, k, i, j);
+        i--;
+        j = (j - 1 + n) % n;
+    }
+    i = r;
+    j = c;
+    while (i >= 0 && i < n)
+    {
+        fill_col(v, n, k, i, j);
+        i++;
+        j++;
+        j %= n;
+    }
+    for (auto i : v)
+        cout << i << nl;
+}
 void run_case()
 {
-    ll n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for (auto &i : v)
-        cin >> i;
-    if (v[0][0] == '1')
-    {
-        cout << "-1" << nl;
-        return;
-    }
-    vector<vector<ll>> ans;
-    for (ll i = n - 1; i >= 0; i--)
-    {
-        for (ll j = m - 1; j >= 0; j--)
-        {
-            if (i == 0 && j == 0)
-                continue;
-            if (v[i][j] == '1')
-            {
-                vector<ll> temp;
-                if (j == 0)
-                {
-                    temp.pb(i - 1);
-                    temp.pb(j);
-                }
-                else
-                {
-                    temp.pb(i);
-                    temp.pb(j - 1);
-                }
-                temp.pb(i);
-                temp.pb(j);
-                ans.pb(temp);
-            }
-        }
-    }
-    cout << ans.size() << nl;
-    for (auto i : ans)
-    {
-        for (auto j : i)
-            cout << j + 1 << " ";
-        cout << nl;
-    }
+    ll n, k, r, c;
+    cin >> n >> k >> r >> c;
+    vector<string> v(n, string(n, '.'));
+    r--;
+    c--;
+    fill_daig(v, r, c, n, k);
 }
 
 int main(int argc, char const *argv[])
 {
     fast_io;
     fast_io2;
-    ll t;
+    ll t = 1;
     cin >> t;
-    // t = 1;
     while (t--)
         run_case();
     return 0;

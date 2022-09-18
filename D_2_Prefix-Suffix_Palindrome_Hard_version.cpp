@@ -55,6 +55,7 @@ int fast_mul(int x, int y){if (x == 0) return 0; else if (x % 2 == 1) return (fa
 
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
+
 string kmp(string t)
 {
     string temp = t;

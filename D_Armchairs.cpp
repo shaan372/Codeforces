@@ -51,18 +51,15 @@ bool isPrime(int n){if (n <= 1) return false; for (int i = 2; i < n; i++)if (n %
 
 
 /*-----------------------------------ACTUAL CODE STARTS HERE-----------------------------------------------------*/
+
 ll dp[5002][5002];
 vi v1, v2;
 ll solve(ll i, ll j)
 {
     if (i >= v1.size())
-    {
         return 0;
-    }
     if (j >= v2.size())
-    {
         return inf;
-    }
     if (dp[i][j] != -1)
         return dp[i][j];
     dp[i][j] = min(abs(v1[i] - v2[j]) + solve(i + 1, j + 1), solve(i, j + 1));
