@@ -38,49 +38,42 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n;
+    cin >> n;
+    string s;
+    cin >> s;
+    vector<ll> v;
+    if (count(all(s), '1') == n)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        cout << "0" << nl;
+        return;
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    if (count(all(s), '0') == n)
+    {
+        cout << n << nl;
+        return;
+    }
+    for (ll i = 0; i < n; i++)
+    {
+        if (s[i] == '0')
+            v.pb(i + 1);
+    }
+    bool vis[n + 1] = {0};
+    ll ans = 0;
+    for (ll i = 0; i < v.size(); i++)
+    {
+        ll x = 1;
+        while (binary_search(all(v), x * v[i]))
+        {
+            if (vis[x * v[i]] == false)
+                ans += v[i];
+            vis[x * v[i]] = true;
+            x++;
+        }
+    }
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +81,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

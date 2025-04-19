@@ -28,9 +28,11 @@ template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 
 void google_case(ll i){cout<<"Case #"<<i<<": ";}
-ll inv(ll i) {if (i == 1) return 1; return (M - ((M / i) * inv(M % i)) % M) % M;}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
-ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
+ll inv(ll n, ll m) {ll res = expo(n, m-2, m); return res;}
+ll mod_add(ll a, ll b, ll m){ll res = (a % m + b % m + m) % m;return res;}
+ll mod_mul(ll a, ll b, ll m){ll res = (a % m * b % m) % m;return res;}
+ll mod_sub(ll a, ll b, ll m){ll res = (a % m - b % m + m) % m;return res;}
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
 vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
@@ -38,51 +40,64 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+const ll max_n = 2e5 + 10;
+ll in[max_n] = {0};
+ll vis[max_n] = {0};
+ll cc[max_n] = {0};
+vector<ll> adj[max_n];
+void dfs(ll node, ll par, ll c)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    vis[node] = 1;
+    cc[node] = c;
+    for (auto child : adj[node])
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        if (child == par || vis[child] == 1)
+            continue;
+        dfs(child, node, c);
+    }
+}
+bool check(vector<ll> &v)
+{
+    for (auto i : v)
+    {
+        if (in[i] != 2)
+            return false;
     }
     return true;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, m;
+    cin >> n >> m;
+    for (ll i = 0; i < m; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        ll u, v;
+        cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+        in[u]++;
+        in[v]++;
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    ll c = 0;
+    for (ll i = 1; i <= n; i++)
+    {
+        if (vis[i] == 0)
+        {
+            c++;
+            dfs(i, -1, c);
+        }
+    }
+    map<ll, vector<ll>> mp;
+    for (ll i = 1; i <= n; i++)
+        mp[cc[i]].pb(i);
+    ll ans = 0;
+    for (auto i : mp)
+    {
+        if (check(i.ss) == true)
+            ans++;
+    }
+    cout << ans << nl;
 }
-
 int main(int argc, char const *argv[])
 {
     fast_io;

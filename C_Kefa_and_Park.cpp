@@ -38,49 +38,41 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+ll dfs(ll node, ll par, vector<vector<ll>> &adj, vector<ll> &vis, vector<ll> &v, ll c, ll m)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    vis[node] = 1;
+    c = v[node] == 1 ? c - 1 : m;
+    if (c < 0)
+        return 0;
+    ll ans = 0;
+    bool flag = false;
+    for (auto child : adj[node])
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        if (vis[child] == 1 || child == par)
+            continue;
+        flag = true;
+        ans += dfs(child, node, adj, vis, v, c, m);
     }
-    return true;
+    return flag == true ? ans : 1;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, m;
+    cin >> n >> m;
+    vector<ll> v(n + 1);
+    for (ll i = 1; i <= n; i++)
+        cin >> v[i];
+    vector<vector<ll>> adj(n + 1);
+    for (ll i = 0; i < n - 1; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        ll x, y;
+        cin >> x >> y;
+        adj[x].pb(y);
+        adj[y].pb(x);
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    vector<ll> vis(n + 1, 0);
+    ll ans = dfs(1, -1, adj, vis, v, m, m);
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])

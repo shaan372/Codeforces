@@ -28,59 +28,58 @@ template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 
 void google_case(ll i){cout<<"Case #"<<i<<": ";}
-ll inv(ll i) {if (i == 1) return 1; return (M - ((M / i) * inv(M % i)) % M) % M;}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
-ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
+ll inv(ll n, ll m) {ll res = expo(n, m-2, m); return res;}
+ll mod_add(ll a, ll b, ll m){ll res = (a % m + b % m) % m;return res;}
+ll mod_mul(ll a, ll b, ll m){ll res = (a % m * b % m) % m;return res;}
+ll mod_sub(ll a, ll b, ll m){ll res = (a % m - b % m + m) % m;return res;}
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
 vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+map<string, bool> dp;
+bool solve(ll x, ll y, ll sum)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    if (x == 0)
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        if (sum == 0)
+            return true;
+        else
+            return false;
     }
-    return true;
+    bool op1 = false;
+    if (x - 1 >= 0 && y - 1 >= 0)
+        op1 |= solve(x - 1, y - 1, sum ^ 1) == false;
+    if (x - 2 >= 0)
+        op1 |= solve(x - 2, y, sum ^ 1) == false;
+    bool op2 = false;
+    if (x - 1 >= 0 && y - 1 >= 0)
+        op2 |= solve(x - 1, y - 1, sum) == false;
+    if (y - 2 >= 0)
+        op2 |= solve(x, y - 2, sum) == false;
+    return op1 || op2;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n;
+    cin >> n;
+    vector<ll> v(2, 0);
+    for (ll i = 0; i < n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
+        ll x;
+        cin >> x;
+        if (x % 2 == 0)
+            v[0]++;
         else
-            gauche = milieu;
+            v[1]++;
     }
-    if (possible(gauche))
-        cout << gauche << endl;
+    bool ans = solve(v[1], v[0], 0);
+    if (ans)
+        cout << "ALice" << nl;
     else
-        cout << droite << endl;
+        cout << "BOB" << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +87,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

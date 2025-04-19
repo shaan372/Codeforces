@@ -38,49 +38,32 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, x, y;
+    cin >> n >> x >> y;
+    string a, b;
+    cin >> a >> b;
+    vector<ll> v;
+    for (ll i = 0; i < n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        if (a[i] != b[i])
+            v.pb(i);
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    if (v.size() % 2 == 1)
+    {
+        cout << "-1" << nl;
+        return;
+    }
+    ll t = v.size();
+    if (t == 2 && v[0] + 1 == v[1])
+    {
+        ll ans = min(x, 2 * y);
+        cout << ans << nl;
+        return;
+    }
+    ll ans = (t / 2) * y;
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +71,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

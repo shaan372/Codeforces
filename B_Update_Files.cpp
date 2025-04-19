@@ -38,49 +38,24 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, k;
+    cin >> n >> k;
+    if (n == 1)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        cout << "0" << nl;
+        return;
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    ll i = 1, ans = 0;
+    while (i < n && i <= k)
+    {
+        ans++;
+        i *= 2;
+    }
+    ll rem = max(0 * 1ll, n - i);
+    ans += (rem / k) + (rem % k != 0);
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +63,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

@@ -30,7 +30,9 @@ template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree
 void google_case(ll i){cout<<"Case #"<<i<<": ";}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
 ll inv(ll n, ll m) {ll res = expo(n, m-2, m); return res;}
-ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
+ll mod_add(ll a, ll b, ll m){ll res = (a % m + b % m) % m;return res;}
+ll mod_mul(ll a, ll b, ll m){ll res = (a % m * b % m) % m;return res;}
+ll mod_sub(ll a, ll b, ll m){ll res = (a % m - b % m + m) % m;return res;}
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
 vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
@@ -38,29 +40,110 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+ll recurse(ll i, ll j, vector<vector<ll>> &dp, string &s)
+{
+    if (i > j)
+        return 1;
+
+    if (dp[i][j] != -1)
+        return dp[i][j];
+
+    // if alice choose start
+    ll ansstart = -1, ansend = 0;
+    ll need = recurse(i + 2, j, dp, s);
+
+    if (s[i] < s[i + 1])
+    {
+        if (need == 2)
+            ansstart = 2;
+        else
+            ansstart = 0;
+    }
+    else if (s[i] == s[i + 1])
+    {
+        ansstart = need;
+    }
+    else
+    {
+        if (need == 0)
+            ansstart = 0;
+        else
+            ansstart = 2;
+    }
+
+    need = recurse(i + 1, j - 1, dp, s);
+    if (s[i] < s[j])
+    {
+        if (need == 2)
+            ansstart = max(ansstart, 2ll);
+        else
+            ansstart = max(ansstart, 0ll);
+    }
+    else if (s[i] == s[j])
+    {
+        ansstart = max(ansstart, need);
+    }
+    else
+    {
+        if (need == 0)
+            ansstart = max(ansstart, 0ll);
+        else
+            ansstart = max(ansstart, 2ll);
+    }
+
+    need = recurse(i, j - 2, dp, s);
+
+    if (s[j] < s[j - 1])
+    {
+        if (need == 2)
+            ansend = 2;
+        else
+            ansend = 0;
+    }
+    else if (s[j] == s[j - 1])
+    {
+        ansend = need;
+    }
+    else
+    {
+        if (need == 0)
+            ansend = 0;
+        else
+            ansend = 2;
+    }
+
+    need = recurse(i + 1, j - 1, dp, s);
+    if (s[j] < s[i])
+    {
+        if (need == 2)
+            ansend = max(ansend, 2ll);
+        else
+            ansend = max(ansend, 0ll);
+    }
+    else if (s[j] == s[i])
+    {
+        ansend = max(ansend, need);
+    }
+    else
+    {
+        if (need == 0)
+            ansend = max(ansend, 0ll);
+        else
+            ansend = max(ansend, 2ll);
+    }
+
+    dp[i][j] = min(ansstart, ansend);
+    return dp[i][j];
+}
 void run_case()
 {
-    ll n, a, b;
-    cin >> n >> a >> b;
-    if (b == 1)
-    {
-        cout << "Yes" << nl;
-        return;
-    }
-    if (a == 1)
-    {
-        cout << ((n % b == 1) ? "Yes" : "No") << nl;
-        return;
-    }
-    ll flag = 0;
-    ll f = 1;
-    while (f <= n)
-    {
-        if ((n - f) % b == 0)
-            flag = 1;
-        f = f * a;
-    }
-    cout << ((flag) ? "Yes" : "No") << nl;
+    string s;
+    cin >> s;
+    ll n = s.length();
+    vector<vector<ll>> dp(n, vector<ll>(n, -1));
+    vector<string> op = {"Alice", "Draw", "Bob"};
+    ll ans = recurse(0, n - 1, dp, s);
+    cout << op[ans] << nl;
 }
 
 int main(int argc, char const *argv[])

@@ -16,7 +16,7 @@
 #define M 1000000007
 #define inf 1000000000000000005
 #define MOD 998244353
-#define nl endl
+#define nl '\n'
 
 using namespace std;
 using namespace __gnu_pbds;
@@ -28,9 +28,11 @@ template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 
 void google_case(ll i){cout<<"Case #"<<i<<": ";}
-ll inv(ll i) {if (i == 1) return 1; return (M - ((M / i) * inv(M % i)) % M) % M;}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
-ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
+ll inv(ll n, ll m) {ll res = expo(n, m-2, m); return res;}
+ll mod_add(ll a, ll b, ll m){ll res = (a % m + b % m + m) % m;return res;}
+ll mod_mul(ll a, ll b, ll m){ll res = (a % m * b % m) % m;return res;}
+ll mod_sub(ll a, ll b, ll m){ll res = (a % m - b % m + m) % m;return res;}
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
 vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
@@ -38,49 +40,76 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+vector<vector<ll>> adj;
+vector<pair<ll, ll>> p;
+vector<ll> sz;
+ll t = 0;
+void dfs(ll node, ll par)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    p.pb({node, t++});
+    for (auto child : adj[node])
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        if (child == par)
+            continue;
+        dfs(child, node);
     }
-    return true;
+}
+void calc(ll node, ll par)
+{
+    ll ans = 1;
+    for (auto child : adj[node])
+    {
+        if (child == par)
+            continue;
+        calc(child, node);
+        ans += sz[child];
+    }
+    sz[node] = ans;
+}
+ll search(ll t, ll l, ll h)
+{
+    while (l <= h)
+    {
+        ll mid = (l + h) >> 1;
+        if (p[mid].ss == t)
+            return p[mid].ff;
+        if (p[mid].ss < t)
+            l = mid + 1;
+        else
+            h = mid - 1;
+    }
+    return -1;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, q;
+    cin >> n >> q;
+    adj.resize(n + 1);
+    sz.resize(n + 1, 0);
+    for (ll i = 2; i <= n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        ll u;
+        cin >> u;
+        adj[i].pb(u);
+        adj[u].pb(i);
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    dfs(1, -1);
+    calc(1, -1);
+    map<ll, ll> m;
+    for (auto i : p)
+        m[i.ff] = i.ss;
+    while (q--)
+    {
+        ll u, k;
+        cin >> u >> k;
+        ll t = m[u] + k - 1;
+        ll ans;
+        if (sz[u] >= k)
+            ans = search(t, 0, n - 1);
+        else
+            ans = -1;
+        cout << ans << nl;
+    }
 }
 
 int main(int argc, char const *argv[])

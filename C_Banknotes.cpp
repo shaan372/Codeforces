@@ -38,49 +38,55 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+ll binexpo(ll n)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    ll ans = 1;
+    ll i = 10;
+    while (n)
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        if (n & 1)
+            ans = ans * i;
+        i = i * i;
+        n >>= 1;
     }
-    return true;
+    return ans;
+}
+ll search(ll ans, ll k, ll x, ll y)
+{
+    ll temp = (y - ans) / x;
+    if (ans + temp * x >= y)
+        temp--;
+    return temp;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, k;
+    cin >> n >> k;
+    vector<ll> v(n);
+    for (ll i = 0; i < n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        ll x;
+        cin >> x;
+        v[i] = binexpo(x);
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    k++;
+    sort(all(v));
+    ll ans = 0;
+    for (ll i = 0; i < n - 1 && k > 0; i++)
+    {
+        if (ans + k * v[i] < v[i + 1])
+        {
+            ans += k * v[i];
+            k = 0;
+            continue;
+        }
+        ll x = search(ans, k, v[i], v[i + 1]);
+        ans += x * v[i];
+        k -= x;
+        k = max(0 * 1ll, k);
+    }
+    ans += k * v[n - 1];
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +94,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

@@ -38,49 +38,22 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n;
+    cin >> n;
+    vector<ll> v;
+    for (ll i = 0; i < n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
+        ll x;
+        cin >> x;
+        x = x % 2;
+        if (v.size() > 0 && v.back() == x)
+            v.ppb();
         else
-            gauche = milieu;
+            v.pb(x);
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    cout << (v.size() <= 1 ? "YES" : "NO") << nl;
 }
 
 int main(int argc, char const *argv[])

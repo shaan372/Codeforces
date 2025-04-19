@@ -27,60 +27,54 @@ template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree
 
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 
-void google_case(ll i){cout<<"Case #"<<i<<": ";}
+ll digitsum(ll n){ll s = 0;while (n > 0){ll r = n % 10;s += r;n = n / 10;}return s;}
 ll inv(ll i) {if (i == 1) return 1; return (M - ((M / i) * inv(M % i)) % M) % M;}
+ll gcd(ll a, ll b){if (b % a == 0){return a;}else{return gcd(b % a, a);}}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
 ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
+ll binExpo(ll a, ll b){if (a == 1 || b == 0) return 1;ll res = 1; while (b){if (b & 1)res = (res % M * a % M) % M;a = (a % M * a % M) % M;b >>= 1;}return res;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
 vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime[1] = false;for (ll i = 2; i <= n; i++){if (is_prime[i] && i * i <= n){for (int j = i * i; j <= n; j += i)is_prime[j] = false;}}vector<ll> ans;for (ll i = 0; i <= n; i++){if (is_prime[i])ans.pb(i);}return ans;}
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+char decode(string &s)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
+    reverse(all(s));
+    if (s.length() == 3)
+        s.ppb();
+    ll num = stoll(s);
+    char ch = 'a' + num - 1;
+    return ch;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n;
+    cin >> n;
+    string s;
+    cin >> s;
+    string ans;
+    reverse(all(s));
+    for (ll i = 0; i < n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
+        if (s[i] == '0')
+        {
+            string t = s.substr(i, 3);
+            char a = decode(t);
+            ans.pb(a);
+            i += 2;
+        }
         else
-            gauche = milieu;
+        {
+            string t = s.substr(i, 1);
+            char a = decode(t);
+            ans.pb(a);
+        }
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    reverse(all(ans));
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,11 +82,8 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
-    for (ll i = 1; i <= t; i++)
-    {
-        // google_case(i);
+    cin >> t;
+    while (t--)
         run_case();
-    }
     return 0;
 }

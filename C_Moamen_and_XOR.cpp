@@ -28,8 +28,8 @@ template <class T, class V = less<T>> using pbds = tree<T, null_type, V, rb_tree
 /*-------------------------------------------------------------------------------------------------------------------------------------*/
 
 void google_case(ll i){cout<<"Case #"<<i<<": ";}
-ll inv(ll i) {if (i == 1) return 1; return (M - ((M / i) * inv(M % i)) % M) % M;}
 ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
+ll inv(ll n, ll m) {ll res = expo(n, m-2, m); return res;}
 ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n /= 2;} for (ll i = 3; i <= sqrt(n); i += 2) {if (n % i == 0) {while (n % i == 0)n /= i; number = (number / i * (i - 1));}} if (n > 1)number = (number / n * (n - 1)) ; return number;}//O(sqrt(N))
 bool isPrime(ll n){if (n <= 1) return false; for (ll i = 2; i < n; i++)if (n % i == 0) return false; return true;}
 ll fast_mul(ll x, ll y){if (x == 0) return 0; else if (x % 2 == 1) return (fast_mul(x >> 1, y << 1) + y); else return fast_mul(x >> 1, y << 1);}
@@ -38,49 +38,67 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+ll solve(ll n)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    ll ans = 0;
+    vector<ll> fact(n + 1, 0);
+    vector<ll> ifact(n + 1, 0);
+    fact[0] = 1;
+    for (ll i = 1; i <= n; i++)
+        fact[i] = (fact[i - 1] * i) % M;
+    for (ll i = 0; i <= n; i++)
+        ifact[i] = inv(fact[i], M);
+    for (ll r = 0; r < n; r += 2)
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        ll temp = (fact[n] % M * ifact[n - r] % M * ifact[r] % M) % M;
+        ans = (ans % M + temp % M) % M;
     }
-    return true;
+    return ans;
+}
+void helper1(ll n, ll k)
+{
+    vector<ll> v(k + 1);
+    v[0] = 1;
+    for (ll i = 1; i <= k; i++)
+    {
+        v[i] = v[i - 1] * 2;
+        v[i] %= M;
+    }
+    for (ll i = 0; i <= k; i++)
+        v[i] = expo(v[i], n, M);
+    vector<ll> dp(k + 1);
+    dp[0] = 1;
+    ll x = solve(n);
+    for (ll i = 1; i <= k; i++)
+        dp[i] = (v[i - 1] % M + x % M * dp[i - 1] % M) % M;
+    cout << dp[k] << nl;
+}
+void helper2(ll n, ll k)
+{
+    vector<ll> v(k + 1);
+    v[0] = 1;
+    for (ll i = 1; i <= k; i++)
+    {
+        v[i] = v[i - 1] * 2;
+        v[i] %= M;
+    }
+    for (ll i = 0; i <= k; i++)
+        v[i] = expo(v[i], n, M);
+    vector<ll> dp(k + 1);
+    dp[0] = 1;
+    ll x = solve(n);
+    for (ll i = 1; i <= k; i++)
+        dp[i] = (dp[i - 1] % M + x % M * dp[i - 1] % M) % M;
+    cout << dp[k] << nl;
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
-    {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
-    }
-    if (possible(gauche))
-        cout << gauche << endl;
+    ll n, k;
+    cin >> n >> k;
+    if (n % 2 == 0)
+        helper1(n, k);
     else
-        cout << droite << endl;
+        helper2(n, k);
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +106,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

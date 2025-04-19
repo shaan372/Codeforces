@@ -38,49 +38,35 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n;
+    cin >> n;
+    vector<ll> v(n);
+    for (auto &i : v)
+        cin >> i;
+    if (n == 1)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        cout << "0" << nl;
+        return;
     }
-    if (possible(gauche))
-        cout << gauche << endl;
+    vector<pair<ll, ll>> ans;
+    if ((v[0] + v[n - 1]) % 2 == 0)
+        v[0] = v[n - 1];
     else
-        cout << droite << endl;
+        v[n - 1] = v[0];
+    ans.pb({1, n});
+    for (ll i = 1; i < n - 1; i++)
+    {
+        ll x = v[0] + v[i];
+        if (x % 2 == 1)
+            ans.pb({1, i + 1});
+        else
+            ans.pb({i + 1, n});
+    }
+    cout << ans.size() << nl;
+    for (auto i : ans)
+        cout << i.ff << " " << i.ss << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +74,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

@@ -38,49 +38,36 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n;
+    cin >> n;
+    maxheap<pair<ll, ll>> pq;
+    for (ll i = 0; i < n; i++)
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        ll x;
+        cin >> x;
+        if (x == 0)
+            continue;
+        pq.push({x, i + 1});
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    map<pair<ll, ll>, ll> m;
+    vector<pair<ll, ll>> ans;
+    while (pq.size() > 1)
+    {
+        auto x = pq.top();
+        pq.pop();
+        auto y = pq.top();
+        pq.pop();
+        ans.pb({x.ss, y.ss});
+        if (x.ff > 1)
+            pq.push({x.ff - 1, x.ss});
+        if (y.ff > 1)
+            pq.push({y.ff - 1, y.ss});
+    }
+    cout << ans.size() << nl;
+    for (auto i : ans)
+        cout << i.ff << " " << i.ss << nl;
 }
 
 int main(int argc, char const *argv[])
@@ -88,7 +75,7 @@ int main(int argc, char const *argv[])
     fast_io;
     fast_io2;
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     for (ll i = 1; i <= t; i++)
     {
         // google_case(i);

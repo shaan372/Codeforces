@@ -38,49 +38,48 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
+const ll max_n = 20;
+map<ll, ll> dp[max_n][max_n];
+ll ans, half;
+void calclf(ll x, ll y, ll val, ll cnt, ll n, ll m, vector<vector<ll>> &a)
 {
-    int mini = -1;
-    for (int i = 0; i < N; i++)
+    val ^= a[x][y];
+    if (cnt == half)
     {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
+        dp[x][y][val]++;
+        return;
     }
-    return true;
+    if (x + 1 < n)
+        calclf(x + 1, y, val, cnt + 1, n, m, a);
+    if (y + 1 < m)
+        calclf(x, y + 1, val, cnt + 1, n, m, a);
+}
+
+void calcrg(ll x, ll y, ll val, ll cnt, ll n, ll m, ll k, vector<vector<ll>> &a)
+{
+    if (cnt == n + m - 2 - half)
+    {
+        if (dp[x][y].count(k ^ val))
+            ans += dp[x][y][k ^ val];
+        return;
+    }
+    if (x > 0)
+        calcrg(x - 1, y, val ^ a[x][y], cnt + 1, n, m, k, a);
+    if (y > 0)
+        calcrg(x, y - 1, val ^ a[x][y], cnt + 1, n, m, k, a);
 }
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
-    {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
-    }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    ll n, m, k;
+    cin >> n >> m >> k;
+    half = (n + m - 2) / 2;
+    vector<vector<ll>> v(n, vector<ll>(m));
+    for (auto &i : v)
+        for (auto &j : i)
+            cin >> j;
+    calclf(0, 0, 0, 0, n, m, v);
+    calcrg(n - 1, m - 1, 0, 0, n, m, k, v);
+    cout << ans << nl;
 }
 
 int main(int argc, char const *argv[])

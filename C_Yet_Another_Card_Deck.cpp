@@ -74,9 +74,7 @@ int main(int argc, char const *argv[])
         for (auto i : mp)
         {
             if (i.second < ans)
-            {
                 mp[i.first] = i.second + 1;
-            }
         }
         mp[t] = 1;
     }

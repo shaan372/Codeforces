@@ -38,49 +38,37 @@ vector<ll> sieve(ll n){vector<bool> is_prime(n + 1, true);is_prime[0] = is_prime
 /*------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-int N, m;
-int tab[500000];
-
-bool possible(int marge)
-{
-    int mini = -1;
-    for (int i = 0; i < N; i++)
-    {
-        int haut = (tab[i] + marge) % m;
-        if (haut >= tab[i])
-        {
-            if (mini > haut)
-                return false;
-            if (mini < tab[i])
-                mini = tab[i];
-        }
-        if (haut < tab[i])
-        {
-            if (mini > haut && mini < tab[i])
-                mini = tab[i];
-        }
-    }
-    return true;
-}
+const ll max_n = 1e4 + 5;
+ll dist[max_n];
+ll vis[max_n];
 void run_case()
 {
-    cin >> N >> m;
-    for (int i = 0; i < N; i++)
-        cin >> tab[i];
-    int gauche = 0;
-    int droite = m - 1;
-    while ((droite - gauche) > 1)
+    ll n, m;
+    cin >> n >> m;
+    queue<ll> q;
+    q.push(n);
+    dist[n] = 0;
+    ll ans = 0;
+    while (!q.empty())
     {
-        int milieu = (gauche + droite) / 2;
-        if (possible(milieu))
-            droite = milieu;
-        else
-            gauche = milieu;
+        ll t = q.front();
+        q.pop();
+        if (t == m)
+            break;
+        if (t - 1 >= 0 && vis[t - 1] == 0)
+        {
+            dist[t - 1] = 1 + dist[t];
+            vis[t - 1] = 1;
+            q.push(t - 1);
+        }
+        if (t > 0 && t * 2 <= 1e4 && vis[t * 2] == 0)
+        {
+            dist[2 * t] = 1 + dist[t];
+            q.push(2 * t);
+            vis[2 * t] = 1;
+        }
     }
-    if (possible(gauche))
-        cout << gauche << endl;
-    else
-        cout << droite << endl;
+    cout << dist[m] << nl;
 }
 
 int main(int argc, char const *argv[])
